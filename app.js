@@ -70,7 +70,6 @@ app.post("/login",async(req,res)=>{
         }else{
             res.send({message:"User is not found"});
         }
-        
     } catch (error) {
         res.send({message:"An error occured in login"})
     }
@@ -116,10 +115,10 @@ app.post('/forgotpassword',async (req,res) =>{
     // creating a temperory token for verification
     console.log(user,"user");
     if(user !==null){
-        const forgotToken = jwt.sign({email:req.body.email},process.env.JWT_SECRET,{expiresIn:'2m'})
+        const forgotToken = jwt.sign({email:req.body.email},process.env.JWT_SECRET,{expiresIn:'10m'})
         const data = await  User.updateOne({email:req.body.email},{$set:{forgotToken:forgotToken}});
         sendResetpasswordMail(user.name,user.email,forgotToken)
-          res.send({
+        res.send({
          statusCode:200,
          message:"Please check your email for to reset mail"
      })
@@ -135,6 +134,77 @@ app.post('/forgotpassword',async (req,res) =>{
     }
 })
 
+
+//To check token valid or not
+// app.get('/resetpassword/:token', async (req,res)=>{
+   
+//     try {
+//         const UserTokenData = await  User.findOne({forgotToken:req.params.token})
+//         console.log(UserTokenData,"user");
+//         if(UserTokenData !== null){
+//             const decodeJWt = await jwtDecode(UserTokenData.forgotToken);
+//             let currentTime = Math.round(new Date()/1000)// expiry date
+//             if(currentTime<=decodeJWt.exp) {
+//              console.log("hello");
+//               res.send({
+//                   statusbar:200,
+//                   success:true,
+//                   message:"Token verified Successfully",
+                  
+//               })
+//           }
+//           else{
+//           // res.status(400).send({success:true,msg:"Link has been expired"})//
+//             res.send({
+//               statusbar:204,
+//               success:true,
+//               message:"Link has been expired",
+//             })
+    
+//           }
+//       }
+//       else{
+//           // res.status(400).send({success:true,msg:"This link has already used to reset password"})
+//           res.send({
+//           statusbar:204,
+//             success:true,
+//             message:"This link has already used to reset password",
+//           })
+//   }
+//       } catch (error) {
+//           // res.status(400).send({success:false,msg:"Error"})
+//           res.send({
+//             statusbar:204,
+//             success:false,
+//             message:"Error",
+//             error:error
+//           })
+  
+//       }
+// })
+
+//Update the password
+// app.post('/newpassword/:token',async (req, res) =>{
+//     try {
+//         const {token} = req.params
+//         const decoded = await jwtDecode(token);
+//         const password = req.body.password
+//         const hashPassword=await bcrypt.hash(password,10);
+//         const user = await User.findOneAndUpdate({email:decoded.email},{$set:{password:hashPassword,forgotToken:""}},{new:true})
+//         res.send({
+//             statusbar:200,
+//             success:true,
+//             message:"Password Updated Successfully",
+//             data:user
+//         })
+        
+//       } catch (error) {
+//         res.send({
+//           statusCode:400,
+//           message:error
+//         })
+//       }
+// })
 
 //To check token valid or not
 app.get('/resetpassword/:token', async (req,res)=>{
@@ -206,6 +276,7 @@ app.post('/newpassword/:token',async (req, res) =>{
         })
       }
 })
+
 
 app.listen(PORT,()=>{
     console.log("App Started on Port "+ PORT);

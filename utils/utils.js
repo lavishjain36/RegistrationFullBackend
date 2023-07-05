@@ -1,5 +1,6 @@
 
 import nodemailer from 'nodemailer'
+// import { response } from "express";
 
 export const sendResetpasswordMail = async (name,email,token)=>{
     try {
@@ -7,7 +8,7 @@ export const sendResetpasswordMail = async (name,email,token)=>{
          service:'gmail',
          auth:{
             user:'jainmonula1@gmail.com',
-            pass:'oanuxkomupypbdel'
+            pass:'azhkokpbkublewcz'
          },
          tls:{
              rejectUnauthorized:false
@@ -29,7 +30,7 @@ export const sendResetpasswordMail = async (name,email,token)=>{
                   transporter.close();
               });
     } catch (error) {
-        res.status(400).send({success:false,msg:error.message})
+        response.status(400).send({success:false,msg:error.message})
     }
 } 
 
